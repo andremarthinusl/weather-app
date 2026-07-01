@@ -103,10 +103,6 @@ class _WeatherPageState extends State<WeatherPage> {
               buildWhen: (previous, current) => 
                 previous.weather.condition != current.weather.condition,
               builder: (context, state) {
-                if (state.weather.condition == WeatherCondition.clear ||
-                    state.weather.condition == WeatherCondition.unknown) {
-                  return const SizedBox.shrink();
-                }
                 return WeatherParticles(condition: state.weather.condition);
               },
             ),

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_weather/weather/weather.dart';
 import 'package:flutter_weather/weather/widgets/glass_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import '../../tasks/cubit/tasks_cubit.dart';
+import '../../tasks/cubit/tasks_state.dart';
+import '../../tasks/widgets/bidirectional_slide_action.dart';
+import '../../tasks/widgets/centered_notification.dart';
 
 class WeatherPopulated extends StatelessWidget {
   const WeatherPopulated({
@@ -118,6 +124,125 @@ class WeatherPopulated extends StatelessWidget {
               ),
             ),
 
+          const SizedBox(height: 16),
+          // Upcoming Activities Preview
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: BlocBuilder<TasksCubit, TasksState>(
+              builder: (context, state) {
+                final upcoming = state.tasks
+                    .where((t) => !t.isCompleted && t.scheduledDate.isAfter(DateTime.now().subtract(const Duration(days: 1))))
+                    .toList()
+                  ..sort((a, b) => a.scheduledDate.compareTo(b.scheduledDate));
+                  
+                if (upcoming.isEmpty) return const SizedBox.shrink();
+                
+                final nextActivity = upcoming.first;
+                
+                // Determine if weather is good or bad for the activity
+                bool? isGoodWeather;
+                final taskDate = DateTime(nextActivity.scheduledDate.year, nextActivity.scheduledDate.month, nextActivity.scheduledDate.day);
+                for (final forecast in weather.dailyForecast) {
+                  final forecastDate = DateTime(forecast.time.year, forecast.time.month, forecast.time.day);
+                  if (forecastDate.isAtSameMomentAs(taskDate)) {
+                    isGoodWeather = forecast.condition == WeatherCondition.clear || forecast.condition == WeatherCondition.cloudy;
+                    break;
+                  }
+                }
+                
+                return GlassCard(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.directions_run, color: Colors.white70, size: 16),
+                              const SizedBox(width: 8),
+                              Text(
+                                'UPCOMING ACTIVITY',
+                                style: theme.textTheme.labelSmall?.copyWith(color: Colors.white70),
+                              ),
+                            ],
+                          ),
+                          Icon(Icons.calendar_month, color: Colors.white54, size: 16),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        nextActivity.title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        DateFormat('EEEE, MMM d, yyyy').format(nextActivity.scheduledDate),
+                        style: theme.textTheme.bodySmall?.copyWith(color: Colors.white70),
+                      ),
+                      if (isGoodWeather != null) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: isGoodWeather ? Colors.green.withValues(alpha: 0.2) : Colors.red.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isGoodWeather ? Colors.green.withValues(alpha: 0.5) : Colors.red.withValues(alpha: 0.5),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                isGoodWeather ? Icons.thumb_up_alt_rounded : Icons.warning_amber_rounded,
+                                size: 14,
+                                color: isGoodWeather ? Colors.greenAccent : Colors.redAccent,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                isGoodWeather ? 'Perfect Weather for this!' : 'Bad Weather Expected',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: isGoodWeather ? Colors.greenAccent : Colors.redAccent,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 20),
+                      BidirectionalSlideAction(
+                        onSwipeRight: () {
+                          context.read<TasksCubit>().toggleTaskCompletion(nextActivity.id);
+                          showCenteredNotification(
+                            context,
+                            '${nextActivity.title}\nCompleted!',
+                            Icons.check_circle_outline,
+                            Colors.greenAccent,
+                          );
+                        },
+                        onSwipeLeft: () {
+                          context.read<TasksCubit>().deleteTask(nextActivity.id);
+                          showCenteredNotification(
+                            context,
+                            '${nextActivity.title}\nCancelled',
+                            Icons.delete_outline,
+                            Colors.redAccent,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          
           const SizedBox(height: 16),
 
           // Daily Forecast and Wind

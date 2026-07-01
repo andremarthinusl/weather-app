@@ -45,7 +45,7 @@ class WeatherCubit extends HydratedCubit<WeatherState> {
   Future<void> fetchWeatherByIp() async {
     emit(state.copyWith(status: WeatherStatus.loading));
     try {
-      final response = await http.get(Uri.parse('https://ipapi.co/json/'));
+      final response = await http.get(Uri.parse('http://ip-api.com/json/'));
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       final city = data['city'] as String?;
       if (city != null && city.isNotEmpty) {

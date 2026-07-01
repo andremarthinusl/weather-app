@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:weather_repository/weather_repository.dart' show WeatherCondition;
@@ -18,7 +19,16 @@ class TasksPage extends StatelessWidget {
     );
   }
 
-  void _addToCalendar(TaskItem task) {
+  void _addToCalendar(TaskItem task, BuildContext context) {
+    if (kIsWeb) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Add to Calendar is only supported on Android/iOS natively.'),
+          backgroundColor: Colors.orangeAccent,
+        ),
+      );
+      return;
+    }
     final Event event = Event(
       title: task.title,
       description: 'Weather-Aware Task',
@@ -81,55 +91,77 @@ class TasksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Smart Tasks'),
+        title: const Text('Activity Planner', style: TextStyle(fontWeight: FontWeight.bold)),
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: BlocBuilder<TasksCubit, TasksState>(
-        builder: (context, state) {
-          if (state.tasks.isEmpty) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.task_alt, size: 80, color: Colors.white54),
-                  SizedBox(height: 16),
-                  Text(
-                    'No tasks yet!',
-                    style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF2C3E50), Color(0xFF3498DB)],
+          ),
+        ),
+        child: SafeArea(
+          child: BlocBuilder<TasksCubit, TasksState>(
+            builder: (context, state) {
+              if (state.tasks.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.directions_run_rounded, size: 80, color: Colors.white70),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'No activities planned!',
+                        style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Plan an outdoor activity\nand we\'ll check the weather for you.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.5),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Add a task to see weather insights.',
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
-                ],
-              ),
-            );
-          }
+                );
+              }
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: state.tasks.length,
-            itemBuilder: (context, index) {
-              final task = state.tasks[index];
-              return TaskListTile(
-                task: task,
-                weatherWarningBadge: _getWeatherBadge(task, context),
-                onToggle: () => context.read<TasksCubit>().toggleTaskCompletion(task.id),
-                onDelete: () => context.read<TasksCubit>().deleteTask(task.id),
-                onAddToCalendar: () => _addToCalendar(task),
+              return ListView.builder(
+                padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 100),
+                itemCount: state.tasks.length,
+                itemBuilder: (context, index) {
+                  final task = state.tasks[index];
+                  return TaskListTile(
+                    task: task,
+                    weatherWarningBadge: _getWeatherBadge(task, context),
+                    onToggle: () => context.read<TasksCubit>().toggleTaskCompletion(task.id),
+                    onDelete: () => context.read<TasksCubit>().deleteTask(task.id),
+                    onAddToCalendar: () => _addToCalendar(task, context),
+                  );
+                },
               );
             },
-          );
-        },
+          ),
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.of(context).push(AddTaskPage.route()),
         backgroundColor: Colors.white,
-        child: const Icon(Icons.add, color: Colors.black),
+        foregroundColor: const Color(0xFF2C3E50),
+        elevation: 4,
+        icon: const Icon(Icons.add_rounded),
+        label: const Text('Plan Activity', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
     );
   }
