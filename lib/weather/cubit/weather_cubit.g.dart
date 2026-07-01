@@ -38,7 +38,10 @@ WeatherState _$WeatherStateFromJson(Map<String, dynamic> json) =>
         );
         return val;
       },
-      fieldKeyMap: const {'temperatureUnits': 'temperature_units'},
+      fieldKeyMap: const {
+        'temperatureUnits': 'temperature_units',
+        'favoriteCities': 'favorite_cities',
+      },
     );
 
 Map<String, dynamic> _$WeatherStateToJson(

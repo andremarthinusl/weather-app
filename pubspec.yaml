@@ -16,9 +16,12 @@ dependencies:
   google_fonts: ^6.0.0
   hydrated_bloc: ^11.0.0
   json_annotation: ^4.8.1
-  path_provider: ^2.0.8
   weather_repository:
     path: packages/weather_repository
+  url_launcher: ^6.3.2
+  uuid: ^4.5.3
+  intl: ^0.20.3
+  add_2_calendar: ^3.1.1
 
 dev_dependencies:
   bloc_lint: ^0.3.0

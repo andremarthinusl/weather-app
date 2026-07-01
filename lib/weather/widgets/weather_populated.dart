@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_weather/weather/weather.dart';
-import 'package:flutter_weather/weather/view/weather_page.dart';
+import 'package:flutter_weather/weather/widgets/glass_card.dart';
 
 class WeatherPopulated extends StatelessWidget {
   const WeatherPopulated({
@@ -394,22 +394,6 @@ class WeatherPopulated extends StatelessWidget {
   }
 }
 
-extension on WeatherCondition {
-  String get toEmoji {
-    switch (this) {
-      case WeatherCondition.clear:
-        return '☀️';
-      case WeatherCondition.rainy:
-        return '🌧️';
-      case WeatherCondition.cloudy:
-        return '☁️';
-      case WeatherCondition.snowy:
-        return '🌨️';
-      case WeatherCondition.unknown:
-        return '❓';
-    }
-  }
-}
 
 extension on Weather {
   String formattedTemperature(TemperatureUnits units) {

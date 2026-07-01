@@ -1,9 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_weather/search/search.dart';
 import 'package:flutter_weather/weather/weather.dart';
-
+import 'package:flutter_weather/tasks/view/tasks_page.dart';
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
 
@@ -65,6 +64,10 @@ class _WeatherPageState extends State<WeatherPage> {
             onPressed: () => context.read<WeatherCubit>().fetchWeatherByIp(),
           ),
           IconButton(
+            icon: const Icon(Icons.check_circle_outline, color: Colors.white),
+            onPressed: () => Navigator.of(context).push(TasksPage.route()),
+          ),
+          IconButton(
             icon: const Icon(Icons.settings, color: Colors.white),
             onPressed: () => _showSettingsModal(context),
           ),
@@ -100,6 +103,10 @@ class _WeatherPageState extends State<WeatherPage> {
               buildWhen: (previous, current) => 
                 previous.weather.condition != current.weather.condition,
               builder: (context, state) {
+                if (state.weather.condition == WeatherCondition.clear ||
+                    state.weather.condition == WeatherCondition.unknown) {
+                  return const SizedBox.shrink();
+                }
                 return WeatherParticles(condition: state.weather.condition);
               },
             ),
@@ -126,7 +133,7 @@ class _WeatherPageState extends State<WeatherPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white.withOpacity(0.9),
+        backgroundColor: Colors.white.withValues(alpha: 0.9),
         child: const Icon(Icons.search, semanticLabel: 'Search', color: Colors.black87),
         onPressed: () async {
           final city = await Navigator.of(context).push(SearchPage.route(context.read<WeatherCubit>()));
@@ -153,7 +160,6 @@ class _WeatherPageState extends State<WeatherPage> {
       case WeatherCondition.rainy:
         return [const Color(0xFF3a7bd5), const Color(0xFF3a6073)];
       case WeatherCondition.unknown:
-      default:
         return [const Color(0xFF6dd5ed), const Color(0xFF2193b0)];
     }
   }
@@ -196,7 +202,7 @@ class SettingsModal extends StatelessWidget {
               return Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -269,36 +275,3 @@ class SettingsModal extends StatelessWidget {
   }
 }
 
-// A generic glassmorphism card widget for other components to use
-class GlassCard extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry padding;
-
-  const GlassCard({
-    super.key,
-    required this.child,
-    this.padding = const EdgeInsets.all(24.0),
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24.0),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-        child: Container(
-          padding: padding,
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.2), // Darker glass for contrast
-            borderRadius: BorderRadius.circular(24.0),
-            border: Border.all(
-              color: Colors.white.withOpacity(0.2),
-              width: 1.0,
-            ),
-          ),
-          child: child,
-        ),
-      ),
-    );
-  }
-}

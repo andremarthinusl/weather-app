@@ -32,6 +32,7 @@ void main() {
     setUp(() {
       weatherCubit = MockWeatherCubit();
       weatherRepository = MockWeatherRepository();
+      when(() => weatherCubit.fetchWeather(any())).thenAnswer((_) async {});
     });
 
     testWidgets('renders WeatherPage', (tester) async {

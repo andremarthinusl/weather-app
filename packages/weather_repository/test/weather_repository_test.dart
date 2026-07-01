@@ -17,6 +17,10 @@ class MockDailyForecast extends Mock implements open_meteo_api.DailyForecast {}
 
 class MockWeatherData extends Mock implements open_meteo_api.WeatherData {}
 
+class MockAirQualityResponse extends Mock implements open_meteo_api.AirQualityResponse {}
+
+class MockAirQuality extends Mock implements open_meteo_api.AirQuality {}
+
 void main() {
   group('WeatherRepository', () {
     late open_meteo_api.OpenMeteoApiClient weatherApiClient;
@@ -106,6 +110,20 @@ void main() {
         when(() => current.isDay).thenReturn(1);
         when(() => current.windSpeed).thenReturn(10.0);
         when(() => current.windDirection).thenReturn(180.0);
+        when(() => hourly.relativeHumidity2m).thenReturn([0.0]);
+        when(() => hourly.apparentTemperature).thenReturn([0.0]);
+        when(() => hourly.uvIndex).thenReturn([0.0]);
+        
+        final aqiData = MockAirQualityResponse();
+        final aqiCurrent = MockAirQuality();
+        when(() => aqiCurrent.usAqi).thenReturn(0);
+        when(() => aqiCurrent.pm25).thenReturn(0.0);
+        when(() => aqiData.current).thenReturn(aqiCurrent);
+        
+        when(() => weatherApiClient.getAirQuality(
+              latitude: any(named: 'latitude'),
+              longitude: any(named: 'longitude'),
+            )).thenAnswer((_) async => aqiData);
 
         when(() => hourly.time).thenReturn(['2022-09-12T00:00']);
         when(() => hourly.temperature2m).thenReturn([42.42]);
@@ -143,6 +161,11 @@ void main() {
             isDay: true,
             windSpeed: 10.0,
             windDirection: 180.0,
+            humidity: 0.0,
+            feelsLike: 42.42,
+            uvIndex: 0.0,
+            aqi: 0.0,
+            pm25: 0.0,
             hourlyForecast: [
               HourlyWeather(
                 time: DateTime.parse('2022-09-12T00:00'),
@@ -174,6 +197,20 @@ void main() {
         when(() => current.isDay).thenReturn(1);
         when(() => current.windSpeed).thenReturn(10.0);
         when(() => current.windDirection).thenReturn(180.0);
+        when(() => hourly.relativeHumidity2m).thenReturn([0.0]);
+        when(() => hourly.apparentTemperature).thenReturn([0.0]);
+        when(() => hourly.uvIndex).thenReturn([0.0]);
+        
+        final aqiData = MockAirQualityResponse();
+        final aqiCurrent = MockAirQuality();
+        when(() => aqiCurrent.usAqi).thenReturn(0);
+        when(() => aqiCurrent.pm25).thenReturn(0.0);
+        when(() => aqiData.current).thenReturn(aqiCurrent);
+        
+        when(() => weatherApiClient.getAirQuality(
+              latitude: any(named: 'latitude'),
+              longitude: any(named: 'longitude'),
+            )).thenAnswer((_) async => aqiData);
 
         when(() => hourly.time).thenReturn(['2022-09-12T00:00']);
         when(() => hourly.temperature2m).thenReturn([42.42]);
@@ -220,6 +257,20 @@ void main() {
         when(() => current.isDay).thenReturn(1);
         when(() => current.windSpeed).thenReturn(10.0);
         when(() => current.windDirection).thenReturn(180.0);
+        when(() => hourly.relativeHumidity2m).thenReturn([0.0]);
+        when(() => hourly.apparentTemperature).thenReturn([0.0]);
+        when(() => hourly.uvIndex).thenReturn([0.0]);
+        
+        final aqiData = MockAirQualityResponse();
+        final aqiCurrent = MockAirQuality();
+        when(() => aqiCurrent.usAqi).thenReturn(0);
+        when(() => aqiCurrent.pm25).thenReturn(0.0);
+        when(() => aqiData.current).thenReturn(aqiCurrent);
+        
+        when(() => weatherApiClient.getAirQuality(
+              latitude: any(named: 'latitude'),
+              longitude: any(named: 'longitude'),
+            )).thenAnswer((_) async => aqiData);
 
         when(() => hourly.time).thenReturn(['2022-09-12T00:00']);
         when(() => hourly.temperature2m).thenReturn([42.42]);
@@ -266,6 +317,20 @@ void main() {
         when(() => current.isDay).thenReturn(1);
         when(() => current.windSpeed).thenReturn(10.0);
         when(() => current.windDirection).thenReturn(180.0);
+        when(() => hourly.relativeHumidity2m).thenReturn([0.0]);
+        when(() => hourly.apparentTemperature).thenReturn([0.0]);
+        when(() => hourly.uvIndex).thenReturn([0.0]);
+        
+        final aqiData = MockAirQualityResponse();
+        final aqiCurrent = MockAirQuality();
+        when(() => aqiCurrent.usAqi).thenReturn(0);
+        when(() => aqiCurrent.pm25).thenReturn(0.0);
+        when(() => aqiData.current).thenReturn(aqiCurrent);
+        
+        when(() => weatherApiClient.getAirQuality(
+              latitude: any(named: 'latitude'),
+              longitude: any(named: 'longitude'),
+            )).thenAnswer((_) async => aqiData);
 
         when(() => hourly.time).thenReturn(['2022-09-12T00:00']);
         when(() => hourly.temperature2m).thenReturn([42.42]);
@@ -312,6 +377,20 @@ void main() {
         when(() => current.isDay).thenReturn(1);
         when(() => current.windSpeed).thenReturn(10.0);
         when(() => current.windDirection).thenReturn(180.0);
+        when(() => hourly.relativeHumidity2m).thenReturn([0.0]);
+        when(() => hourly.apparentTemperature).thenReturn([0.0]);
+        when(() => hourly.uvIndex).thenReturn([0.0]);
+        
+        final aqiData = MockAirQualityResponse();
+        final aqiCurrent = MockAirQuality();
+        when(() => aqiCurrent.usAqi).thenReturn(0);
+        when(() => aqiCurrent.pm25).thenReturn(0.0);
+        when(() => aqiData.current).thenReturn(aqiCurrent);
+        
+        when(() => weatherApiClient.getAirQuality(
+              latitude: any(named: 'latitude'),
+              longitude: any(named: 'longitude'),
+            )).thenAnswer((_) async => aqiData);
 
         when(() => hourly.time).thenReturn(['2022-09-12T00:00']);
         when(() => hourly.temperature2m).thenReturn([42.42]);

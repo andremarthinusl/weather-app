@@ -10,6 +10,16 @@ void main() {
         condition: WeatherCondition.cloudy,
         temperature: 10.2,
         location: 'Chicago',
+        isDay: true,
+        windSpeed: 10.0,
+        windDirection: 180.0,
+        humidity: 50.0,
+        feelsLike: 10.2,
+        uvIndex: 5.0,
+        aqi: 20.0,
+        pm25: 10.0,
+        hourlyForecast: const [],
+        dailyForecast: const [],
       );
       expect(Weather.fromJson(weather.toJson()), equals(weather));
     });

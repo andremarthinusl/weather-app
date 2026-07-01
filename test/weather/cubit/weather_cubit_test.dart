@@ -31,6 +31,16 @@ void main() {
       when(() => weather.condition).thenReturn(weatherCondition);
       when(() => weather.location).thenReturn(weatherLocation);
       when(() => weather.temperature).thenReturn(weatherTemperature);
+      when(() => weather.isDay).thenReturn(true);
+      when(() => weather.windSpeed).thenReturn(0.0);
+      when(() => weather.windDirection).thenReturn(0.0);
+      when(() => weather.humidity).thenReturn(0.0);
+      when(() => weather.feelsLike).thenReturn(0.0);
+      when(() => weather.uvIndex).thenReturn(0.0);
+      when(() => weather.aqi).thenReturn(0.0);
+      when(() => weather.pm25).thenReturn(0.0);
+      when(() => weather.hourlyForecast).thenReturn(const []);
+      when(() => weather.dailyForecast).thenReturn(const []);
       when(
         () => weatherRepository.getWeather(any()),
       ).thenAnswer((_) async => weather);
@@ -339,6 +349,8 @@ void main() {
             humidity: 0,
             feelsLike: 0,
             uvIndex: 0,
+            aqi: 0,
+            pm25: 0,
             hourlyForecast: const [],
             dailyForecast: const [],
           ),
@@ -384,6 +396,8 @@ void main() {
             humidity: 0,
             feelsLike: 0,
             uvIndex: 0,
+            aqi: 0,
+            pm25: 0,
             hourlyForecast: const [],
             dailyForecast: const [],
           ),

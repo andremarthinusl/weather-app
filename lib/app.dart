@@ -4,6 +4,7 @@ import 'package:flutter_weather/weather/weather.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weather_repository/weather_repository.dart'
     show WeatherRepository;
+import 'tasks/cubit/tasks_cubit.dart';
 
 class WeatherApp extends StatelessWidget {
   const WeatherApp({super.key});
@@ -13,8 +14,11 @@ class WeatherApp extends StatelessWidget {
     return RepositoryProvider(
       create: (_) => WeatherRepository(),
       dispose: (repository) => repository.dispose(),
-      child: BlocProvider(
-        create: (context) => WeatherCubit(context.read<WeatherRepository>()),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => WeatherCubit(context.read<WeatherRepository>())),
+          BlocProvider(create: (_) => TasksCubit()),
+        ],
         child: const WeatherAppView(),
       ),
     );

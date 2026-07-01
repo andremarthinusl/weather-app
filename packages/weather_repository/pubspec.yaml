@@ -13,6 +13,7 @@ dependencies:
     path: ../open_meteo_api
 
 dev_dependencies:
+  bloc_lint: ^0.4.1
   build_runner: ^2.0.0
   coverage: ^1.0.3
   json_serializable: ^6.3.1

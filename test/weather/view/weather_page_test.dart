@@ -22,7 +22,7 @@ void main() {
   group('WeatherPage', () {
     final weather = Weather(
       temperature: Temperature(value: 4.2),
-      condition: WeatherCondition.cloudy,
+      condition: WeatherCondition.clear,
       lastUpdated: DateTime(2020),
       location: 'London',
       isDay: true,
@@ -40,6 +40,7 @@ void main() {
 
     setUp(() {
       weatherCubit = MockWeatherCubit();
+      when(() => weatherCubit.fetchWeather(any())).thenAnswer((_) async {});
     });
 
     testWidgets('renders WeatherEmpty for WeatherStatus.initial', (
@@ -124,17 +125,18 @@ void main() {
       expect(find.byType(WeatherPopulated), findsOneWidget);
     });
 
-    testWidgets('shows SettingsModal when settings icon is tapped', (
-      tester,
-    ) async {
+    testWidgets('shows SettingsModal when settings icon is tapped', (tester) async {
       when(() => weatherCubit.state).thenReturn(WeatherState());
       await tester.pumpWidget(
-        BlocProvider.value(
-          value: weatherCubit,
-          child: MaterialApp(home: WeatherPage()),
+        RepositoryProvider<WeatherRepository>.value(
+          value: MockWeatherRepository(),
+          child: BlocProvider.value(
+            value: weatherCubit,
+            child: MaterialApp(home: WeatherPage()),
+          ),
         ),
       );
-      await tester.tap(find.byType(IconButton));
+      await tester.tap(find.byIcon(Icons.settings));
       await tester.pumpAndSettle();
       expect(find.byType(SettingsModal), findsOneWidget);
     });
@@ -144,9 +146,12 @@ void main() {
     ) async {
       when(() => weatherCubit.state).thenReturn(WeatherState());
       await tester.pumpWidget(
-        BlocProvider.value(
-          value: weatherCubit,
-          child: MaterialApp(home: WeatherPage()),
+        RepositoryProvider<WeatherRepository>.value(
+          value: MockWeatherRepository(),
+          child: BlocProvider.value(
+            value: weatherCubit,
+            child: MaterialApp(home: WeatherPage()),
+          ),
         ),
       );
       await tester.tap(find.byType(FloatingActionButton));
@@ -163,9 +168,12 @@ void main() {
       );
       when(() => weatherCubit.refreshWeather()).thenAnswer((_) async {});
       await tester.pumpWidget(
-        BlocProvider.value(
-          value: weatherCubit,
-          child: MaterialApp(home: WeatherPage()),
+        RepositoryProvider<WeatherRepository>.value(
+          value: MockWeatherRepository(),
+          child: BlocProvider.value(
+            value: weatherCubit,
+            child: MaterialApp(home: WeatherPage()),
+          ),
         ),
       );
       await tester.fling(
@@ -180,10 +188,15 @@ void main() {
     testWidgets('triggers fetch on search pop', (tester) async {
       when(() => weatherCubit.state).thenReturn(WeatherState());
       when(() => weatherCubit.fetchWeather(any())).thenAnswer((_) async {});
+      final repo = MockWeatherRepository();
+      when(() => repo.searchLocations(any())).thenAnswer((_) async => ['Chicago']);
       await tester.pumpWidget(
-        BlocProvider.value(
-          value: weatherCubit,
-          child: MaterialApp(home: WeatherPage()),
+        RepositoryProvider<WeatherRepository>.value(
+          value: repo,
+          child: BlocProvider.value(
+            value: weatherCubit,
+            child: MaterialApp(home: WeatherPage()),
+          ),
         ),
       );
       await tester.tap(find.byType(FloatingActionButton));
